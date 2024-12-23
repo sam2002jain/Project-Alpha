@@ -6,7 +6,7 @@ import ErrorIcon from '../assets/error.svg';
 import { Toast } from 'toastify-react-native';
 import styles from '../styleSheets/loginscreenStyle';
 import { emailregex } from '../utils/regex';
-import { setLoginState } from '../Storage/storage';
+import axios from 'axios';
 
 enum FormFields {
   Username = 'username',
@@ -42,14 +42,38 @@ interface SignupScreenProps {
   };
 }
 
+//lets complete the app with springboot and sql based backend connectivity to login and save data 
+//locally then we can host this backend on vercel for free and get connectivity to the firebase database.
+
+// I am using the springboot with mysql to do validation of the login data with dummy data for now.
+
 const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    setLoginState(true);
-    navigation.navigate('Document');
-    Toast.success('Login Successful');
+    try {
+      setLoading(true);
+      const response = await axios.post('https://alphabackend-fn3n.onrender.com/api/auth/signin', {
+        email: data.email,
+        password: data.password
+      });
+
+      if (response.data.message === 'Sign in successful') {
+        navigation.navigate('Document');
+        Toast.success('Login Successful');
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.error || 'Login failed';
+        Toast.error(message);
+      } else {
+        Toast.error('Network error occurred');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
