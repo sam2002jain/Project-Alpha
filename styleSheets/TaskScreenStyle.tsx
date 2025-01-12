@@ -5,6 +5,17 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: '#fff',
     },
+    emptyContainer: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+    emptyText:{
+      fontSize:20,
+      textAlign:"center",
+
+    },
+    loader:{borderWidth:1,
+    },
     headerTitle: {
       fontSize: 20,
       fontWeight: 'semibold',
